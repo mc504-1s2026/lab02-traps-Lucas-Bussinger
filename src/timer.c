@@ -1,32 +1,32 @@
 #include <arch/timer.h>
 #include <kernel/panic.h>
+#include <arch/csr.h>
+#include <kernel/printf.h>
 
 u64 timer_read()
 {
-	/* not implemented */
-	BUG();
+	return csr_read(CSR_TIME);
 }
 
 void timer_irq_enable()
 {
-	/* not implemented */
-	BUG();
+	csr_set(CSR_SIE, CSR_SIE_STIE);
 }
 
 void timer_irq_disable()
 {
-	/* not implemented */
-	BUG();
+	csr_clear(CSR_SIE, CSR_SIE_STIE);
 }
 
 void timer_set_alarm(u64 secs)
 {
-	/* not implemented */
-	BUG();
+	u64 ticks = timer_read() + secs * TIMER_FREQ;
+	csr_write(CSR_STIMECMP, ticks);
 }
 
 void timer_irq()
 {
-	/* not implemented */
-	BUG();
+	csr_write(CSR_STIMECMP, -1ULL);
+	printk(LOG_INFO, "alarm\n");
 }
+
